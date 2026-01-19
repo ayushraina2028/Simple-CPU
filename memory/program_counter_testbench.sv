@@ -4,6 +4,14 @@ module pc_testbench;
     logic reset;
     logic [31:0] pc_value;
     logic [31:0] data;
+    logic [31:0] instruction;
+
+    // Instruction Register
+    instruction_register ir (
+        .clock(clock),
+        .instruction_in(data),
+        .instruction_out(instruction)
+    );
 
     // Program counter
     program_counter pc (
@@ -37,7 +45,7 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Data = %0d", $time, pc_value, data);
+        $monitor("time=%0t PC= %0d Instruction = %0d", $time, pc_value, instruction);
 
     end
 

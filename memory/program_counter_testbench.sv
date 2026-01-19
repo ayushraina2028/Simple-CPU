@@ -12,6 +12,16 @@ module pc_testbench;
     logic [2:0] func3;
     logic [6:0] func7;
     logic is_add;
+    logic [31:0] rs1_data;
+    logic [31:0] rs2_data;
+
+    // Register
+    register_file rf1 (
+        .rs1(rs1),
+        .rs2(rs2),
+        .rs1_data(rs1_data),
+        .rs2_data(rs2_data)
+    );
 
     // Checking if its an add instruction;
     assign is_add = (opcode == 7'b0110011) && (func3 == 3'b000) && (func7 == 7'b0000000);
@@ -67,7 +77,7 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add);
+        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data);
 
     end
 

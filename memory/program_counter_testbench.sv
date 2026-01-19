@@ -6,9 +6,17 @@ module pc_testbench;
     logic [31:0] data;
     logic [31:0] instruction;
     logic [6:0] opcode;
+    logic [4:0] rd;
+    logic [4:0] rs1;
+    logic [4:0] rs2;
 
     // In Riscv, instructions are of 32 bits and lower 7 bits are for opcodes
     assign opcode = instruction[6:0];
+
+    // Extracting Operands from instruction
+    assign rd = instruction[11:7];
+    assign rs1 = instruction[19:15];
+    assign rs2 = instruction[24:20];
 
     // Instruction Register
     instruction_register ir (
@@ -49,7 +57,7 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b", $time, pc_value, instruction, opcode);
+        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2);
 
     end
 

@@ -17,6 +17,7 @@ module pc_testbench;
     logic is_add;
     logic is_sub;
     logic is_addi;
+    logic is_subi;
 
     logic [31:0] rs1_data;
     logic [31:0] rs2_data;
@@ -29,6 +30,7 @@ module pc_testbench;
     logic [31:0] x4_value;
     logic [31:0] x5_value;
     logic [31:0] x6_value;
+    logic [31:0] x7_value;
 
     logic [31:0] imm;
 
@@ -49,15 +51,17 @@ module pc_testbench;
     assign x4_value = rf1.registers[4];
     assign x5_value = rf1.registers[5];
     assign x6_value = rf1.registers[6];
+    assign x7_value = rf1.registers[7];
 
     // Write support for add and sub instruction.
-    assign reg_we = is_add | is_sub | is_addi;
+    assign reg_we = is_add | is_sub | is_addi | is_subi;
 
     // Computing Result, handle both add and sub
     assign alu_result = 
         is_add ? (rs1_data + rs2_data) : 
         is_sub ? (rs1_data - rs2_data) : 
         is_addi ? (rs1_data + imm) :
+        is_subi ? (rs1_data - imm) :
         32'b0;
 
     // Checking if its an add instruction;
@@ -68,6 +72,9 @@ module pc_testbench;
 
     // Checking if its an addi operation
     assign is_addi = (opcode == 7'b0010011) && (func3 == 3'b000);
+
+    // Checking if its an subi (our own)
+    assign is_subi = (opcode == 7'b0010011) && (func3 == 3'b001);
 
     // Getting imm (sign extended)
     assign imm = {{20{instruction[31]}}, instruction[31:20]};
@@ -116,14 +123,14 @@ module pc_testbench;
         #10;
         reset = 0;
 
-        #60;
+        #80;
         $finish;
 
     end
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d x6 = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value, x6_value);
+        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d x6 = %0d x7=%0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value, x6_value, x7_value);
 
     end
 

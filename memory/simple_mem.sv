@@ -13,8 +13,12 @@ module simple_memory(
     initial begin
         
         // 32'dn -> store decimal number n in 32 bit register
+
+        // add x1, x2, x3
         memory[0] = 32'h003100B3;
 
+        // add x4, x1, x3
+        memory[1] = 32'h00308233;
     end
 
     // assign logic, address = program counter, which is increasing by 4, do divide by 4

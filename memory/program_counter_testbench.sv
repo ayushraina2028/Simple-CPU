@@ -17,6 +17,7 @@ module pc_testbench;
     logic [31:0] alu_result;
     logic reg_we;
     logic [31:0] x1_value;
+    logic [31:0] x4_value;
 
     // Register
     register_file rf1 (
@@ -30,7 +31,9 @@ module pc_testbench;
         .rs2_data(rs2_data)
     );
 
+    // Get register values
     assign x1_value = rf1.registers[1];
+    assign x4_value = rf1.registers[4];
 
     // For now only write when instruction is odd
     assign reg_we = is_add;
@@ -92,7 +95,7 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value);
+        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value);
 
     end
 

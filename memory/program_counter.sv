@@ -1,6 +1,7 @@
 module program_counter(
     input logic clock,
     input logic reset,
+    input logic is_halt,
     output logic [31:0] program_counter_value
 
     // program_counter_value is the address to be used next
@@ -12,9 +13,10 @@ module program_counter(
 
         if (reset) 
             program_counter_value <= 32'd0;
-        else
+        else if(!is_halt)
             program_counter_value <= program_counter_value + 32'd4;
-
+        else    
+            program_counter_value <= program_counter_value;
     end
 
 endmodule

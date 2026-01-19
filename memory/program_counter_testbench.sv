@@ -18,6 +18,7 @@ module pc_testbench;
     logic is_sub;
     logic is_addi;
     logic is_subi;
+    logic is_halt;
 
     logic [31:0] rs1_data;
     logic [31:0] rs2_data;
@@ -54,7 +55,7 @@ module pc_testbench;
     assign x7_value = rf1.registers[7];
 
     // Write support for add and sub instruction.
-    assign reg_we = is_add | is_sub | is_addi | is_subi;
+    assign reg_we = (is_add | is_sub | is_addi | is_subi) & ~is_halt;
 
     // Computing Result, handle both add and sub
     assign alu_result = 
@@ -75,6 +76,9 @@ module pc_testbench;
 
     // Checking if its an subi (our own)
     assign is_subi = (opcode == 7'b0010011) && (func3 == 3'b001);
+
+    // Checking if its an halt operation
+    assign is_halt = (instruction == 32'hFFFFFFFF);
 
     // Getting imm (sign extended)
     assign imm = {{20{instruction[31]}}, instruction[31:20]};
@@ -102,6 +106,7 @@ module pc_testbench;
     program_counter pc (
         .clock(clock),
         .reset(reset),
+        .is_halt(is_halt),
         .program_counter_value(pc_value)
     );
 
@@ -123,9 +128,19 @@ module pc_testbench;
         #10;
         reset = 0;
 
-        #80;
+        #100;
         $finish;
 
+    end
+
+    // Halt early if halt instruction is executed
+    always @(posedge clock) begin
+        if(is_halt) begin
+
+            $display("CPU Halted at time %0t", $time);
+            $finish;
+
+        end
     end
 
     initial begin

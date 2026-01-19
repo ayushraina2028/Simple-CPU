@@ -11,6 +11,10 @@ module pc_testbench;
     logic [4:0] rs2;
     logic [2:0] func3;
     logic [6:0] func7;
+    logic is_add;
+
+    // Checking if its an add instruction;
+    assign is_add = (opcode == 7'b0110011) && (func3 == 3'b000) && (func7 == 7'b0000000);
 
     // In Riscv, instructions are of 32 bits and lower 7 bits are for opcodes
     assign opcode = instruction[6:0];
@@ -63,7 +67,7 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7);
+        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add);
 
     end
 

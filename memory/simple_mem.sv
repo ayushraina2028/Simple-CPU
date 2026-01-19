@@ -13,10 +13,7 @@ module simple_memory(
     initial begin
         
         // 32'dn -> store decimal number n in 32 bit register
-        memory[0] = 32'd10;
-        memory[1] = 32'd20;
-        memory[2] = 32'd99;
-        memory[3] = 32'd123;
+        memory[0] = 32'h003100B3;
 
     end
 

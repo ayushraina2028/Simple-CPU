@@ -16,6 +16,7 @@ module pc_testbench;
     
     logic is_add;
     logic is_sub;
+    logic is_addi;
 
     logic [31:0] rs1_data;
     logic [31:0] rs2_data;
@@ -27,6 +28,9 @@ module pc_testbench;
     logic [31:0] x1_value;
     logic [31:0] x4_value;
     logic [31:0] x5_value;
+    logic [31:0] x6_value;
+
+    logic [31:0] imm;
 
     // Register
     register_file rf1 (
@@ -44,18 +48,29 @@ module pc_testbench;
     assign x1_value = rf1.registers[1];
     assign x4_value = rf1.registers[4];
     assign x5_value = rf1.registers[5];
+    assign x6_value = rf1.registers[6];
 
     // Write support for add and sub instruction.
-    assign reg_we = is_add | is_sub;
+    assign reg_we = is_add | is_sub | is_addi;
 
     // Computing Result, handle both add and sub
-    assign alu_result = is_add ? (rs1_data + rs2_data) : is_sub ? (rs1_data - rs2_data) : 32'b0;
+    assign alu_result = 
+        is_add ? (rs1_data + rs2_data) : 
+        is_sub ? (rs1_data - rs2_data) : 
+        is_addi ? (rs1_data + imm) :
+        32'b0;
 
     // Checking if its an add instruction;
     assign is_add = (opcode == 7'b0110011) && (func3 == 3'b000) && (func7 == 7'b0000000);
 
     // Checkingif its an subtract operation
     assign is_sub = (opcode == 7'b0110011) && (func3 == 3'b000) && (func7 == 7'b0100000);
+
+    // Checking if its an addi operation
+    assign is_addi = (opcode == 7'b0010011) && (func3 == 3'b000);
+
+    // Getting imm (sign extended)
+    assign imm = {{20{instruction[31]}}, instruction[31:20]};
 
     // In Riscv, instructions are of 32 bits and lower 7 bits are for opcodes
     assign opcode = instruction[6:0];
@@ -101,14 +116,14 @@ module pc_testbench;
         #10;
         reset = 0;
 
-        #50;
+        #60;
         $finish;
 
     end
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value);
+        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d x6 = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value, x6_value);
 
     end
 

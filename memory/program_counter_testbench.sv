@@ -14,6 +14,10 @@ module pc_testbench;
     logic is_add;
     logic [31:0] rs1_data;
     logic [31:0] rs2_data;
+    logic [31:0] alu_result;
+
+    // Computing Result
+    assign alu_result = is_add ? (rs1_data + rs2_data) : 32'd0;
 
     // Register
     register_file rf1 (
@@ -77,7 +81,7 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data);
+        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result);
 
     end
 

@@ -35,6 +35,19 @@ module pc_testbench;
 
     logic [31:0] imm;
 
+    logic memory_we;
+    logic [31:0] memory_address;
+    logic [31:0] memory_write_data;
+    logic [31:0] memory_read_data;
+
+    data_memory dm1 (
+        .clock(clock),
+        .memory_we(memory_we),
+        .address(memory_address),
+        .write_data(memory_write_data),
+        .read_data(memory_read_data)
+    );
+
     // Register
     register_file rf1 (
         .clock(clock),
@@ -46,6 +59,11 @@ module pc_testbench;
         .rs1_data(rs1_data),
         .rs2_data(rs2_data)
     );
+
+    // Wire Testing
+    assign memory_address = 32'd8;
+    assign memory_write_data = 32'd777;
+    assign memory_we = (pc_value == 32'd0); // write only at PC = 0
 
     // Get register values
     assign x1_value = rf1.registers[1];
@@ -145,7 +163,9 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d x6 = %0d x7=%0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value, x6_value, x7_value);
+        // $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d x6 = %0d x7=%0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value, x6_value, x7_value);
+
+        $monitor("time = %0d PC = %0d memory_address = %0d memory_we = %0d memory_read = %0d", $time, pc_value, memory_address, memory_we, memory_read_data);
 
     end
 

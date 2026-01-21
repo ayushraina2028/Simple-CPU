@@ -16,7 +16,8 @@ module data_memory (
         memory[0] = 32'd100;
         memory[1] = 32'd200;
         memory[2] = 32'd300;
-
+        memory[5] = 32'd888;
+        
     end
 
     // 31:2 means

@@ -29,8 +29,10 @@ module simple_memory(
         // subi x7, x6, 3
         memory[4] = 32'h00331393;
 
+        memory[5] = 32'h0002A403;
+
         // Halt
-        memory[5] = 32'hFFFFFFFF;
+        memory[6] = 32'hFFFFFFFF;
     end
 
     // assign logic, address = program counter, which is increasing by 4, do divide by 4

@@ -20,6 +20,7 @@ module pc_testbench;
     logic is_subi;
     logic is_halt;
     logic is_lw;
+    logic is_sw;
 
     logic [31:0] rs1_data;
     logic [31:0] rs2_data;
@@ -35,7 +36,10 @@ module pc_testbench;
     logic [31:0] x7_value;
     logic [31:0] x8_value;
 
+    logic [31:0] mem6_value;
+
     logic [31:0] imm;
+    logic [31:0] imm_s; // S type immediate
 
     logic memory_we;
     logic [31:0] memory_address;
@@ -64,10 +68,13 @@ module pc_testbench;
         .rs2_data(rs2_data)
     );
 
+    // Get memory values
+    assign mem6_value = dm1.memory[6];
+
     // Wire Testing
     assign memory_address = alu_result;
     assign memory_write_data = rs2_data;
-    assign memory_we = 1'b0; // no writes for lw
+    assign memory_we = is_sw; // no writes for lw
     assign wb_data = is_lw ? memory_read_data : alu_result;
 
     // Get register values
@@ -88,28 +95,21 @@ module pc_testbench;
         is_addi ? (rs1_data + imm) :
         is_subi ? (rs1_data - imm) :
         is_lw ? (rs1_data + imm) :
+        is_sw ? (rs1_data + imm_s) :
         32'b0;
 
-    // Checking if its an add instruction;
+    // Checking for add,sub,addi,subi,halt,lw,sw
     assign is_add = (opcode == 7'b0110011) && (func3 == 3'b000) && (func7 == 7'b0000000);
-
-    // Checkingif its an subtract operation
     assign is_sub = (opcode == 7'b0110011) && (func3 == 3'b000) && (func7 == 7'b0100000);
-
-    // Checking if its an addi operation
     assign is_addi = (opcode == 7'b0010011) && (func3 == 3'b000);
-
-    // Checking if its an subi (our own)
     assign is_subi = (opcode == 7'b0010011) && (func3 == 3'b001);
-
-    // Checking if its an halt operation
     assign is_halt = (instruction == 32'hFFFFFFFF);
-
-    // Checking if this is a lw instruction
     assign is_lw = (opcode == 7'b0000011) && (func3 == 3'b010);
+    assign is_sw = (opcode == 7'b0100011) && (func3 == 3'b010);
 
     // Getting imm (sign extended)
     assign imm = {{20{instruction[31]}}, instruction[31:20]};
+    assign imm_s = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
 
     // In Riscv, instructions are of 32 bits and lower 7 bits are for opcodes
     assign opcode = instruction[6:0];
@@ -173,7 +173,7 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d x6 = %0d x7=%0d memory_address = %0d memory_we = %0d memory_read = %0d x5_value = %0d x8_value = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value, x6_value, x7_value, memory_address, memory_we, memory_read_data, x5_value, x8_value);
+        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d x6 = %0d x7=%0d memory_address = %0d memory_we = %0d memory_read = %0d x5_value = %0d x8_value = %0d mem6_value = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value, x6_value, x7_value, memory_address, memory_we, memory_read_data, x5_value, x8_value, mem6_value);
 
     end
 

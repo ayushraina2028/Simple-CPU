@@ -2,13 +2,18 @@ module program_counter(
     input logic clock,
     input logic reset,
     input logic is_halt,
+    input logic is_jal,
     input logic branch_taken,
     input logic [31:0] branch_target,
+    input logic [31:0] imm_j,
     output logic [31:0] program_counter_value
 );
 
     logic [31:0] next_pc;
-    assign next_pc = branch_taken ? branch_target : program_counter_value + 32'd4;
+    assign next_pc = 
+                    branch_taken ? branch_target : 
+                    is_jal ? (program_counter_value + imm_j) :
+                    program_counter_value + 32'd4;
 
     always_ff @(posedge clock) begin
         if (reset) 

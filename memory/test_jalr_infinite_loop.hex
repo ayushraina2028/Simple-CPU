@@ -1,0 +1,17 @@
+00500093   // addi x1, x0, 5        PC=0
+00A00113   // addi x2, x0, 10       PC=4
+002081B3   // add  x3, x1, x2       PC=8
+
+010002EF   // jal  x5, +16          PC=12 → jump to 28, x5=16
+
+00100213   // addi x4, x0, 1        PC=16 (delay slot, executes once)
+00200213   // addi x4, x0, 2        PC=20 (skipped)
+00300213   // addi x4, x0, 3        PC=24 (skipped)
+
+06300313   // addi x6, x0, 99       PC=28
+
+00028067   // jalr x0, 0(x5)        PC=32 → return to PC=16
+
+00700393   // addi x7, x0, 7        PC=36
+
+FFFFFFFF   // halt                 PC=40

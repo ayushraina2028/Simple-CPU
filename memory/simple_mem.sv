@@ -11,7 +11,7 @@ module simple_memory(
 
     // Initialize memory with some known values
     initial begin
-        $readmemh("test_jal.hex", memory);
+        $readmemh("test_jalr.hex", memory);
     end
 
 

@@ -1,10 +1,6 @@
 int main() {
-    
-    int a = 10;
-    int b = 20;
+    int a = 500;
+    int b = 700;
     int c = a + b;
-
-    while(1);
-    return 0;
-
+    return c;
 }

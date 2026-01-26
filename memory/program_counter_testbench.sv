@@ -47,6 +47,9 @@ module pc_testbench;
     logic [31:0] x6_value;
     logic [31:0] x7_value;
     logic [31:0] x8_value;
+    logic [31:0] x10_value;
+    logic [31:0] x14_value;
+    logic [31:0] x15_value;
 
     logic [31:0] mem6_value;
 
@@ -124,6 +127,9 @@ module pc_testbench;
     assign x6_value = rf1.registers[6];
     assign x7_value = rf1.registers[7];
     assign x8_value = rf1.registers[8];
+    assign x10_value = rf1.registers[10];
+    assign x14_value = rf1.registers[14];
+    assign x15_value = rf1.registers[15];
 
     // Write support for add and sub instruction.
     assign reg_we = (is_add | is_sub | is_addi | is_subi | is_lw | is_jal | is_jalr) & ~is_halt;
@@ -215,7 +221,7 @@ module pc_testbench;
         #10;
         reset = 0;
 
-        #150;
+        #1500;
         $finish;
 
     end
@@ -232,8 +238,8 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t | PC=%0d | Instr=0x%h (Opc=%07b f3=%03b f7=%07b) | rd=%0d rs1=%0d rs2=%0d | rs1_data=%0d rs2_data=%0d | imm_b=%0d imm_j=%0d | ALU=%0d | is_beq=%0d is_jal=%0d branch_taken=%0d branch_target=%0d | reg_we=%0d wb_data=%0d | x1=%0d x2=%0d x3=%0d x4 = %0d x5 = %0d x6 = %0d x7 = %0d | mem_we=%0d mem_addr=%0d mem_data=%0d", 
-        $time, pc_value, instruction, opcode, func3, func7, rd, rs1, rs2, rs1_data, rs2_data, imm_b, imm_j, alu_result, is_beq, is_jal, branch_taken, branch_target, reg_we, wb_data, x1_value, x2_value, x3_value, x4_value, x5_value, x6_value, x7_value, memory_we, memory_address, memory_read_data);
+        $monitor("time=%0t | PC=%0d | Instr=0x%h (Opc=%07b f3=%03b f7=%07b) | rd=%0d rs1=%0d rs2=%0d | rs1_data=%0d rs2_data=%0d | imm_b=%0d imm_j=%0d | ALU=%0d | is_beq=%0d is_jal=%0d branch_taken=%0d branch_target=%0d | reg_we=%0d wb_data=%0d | x1=%0d x2=%0d x3=%0d x4=%0d x5=%0d x6=%0d x7=%0d x8=%0d x10=%0d x14=%0d x15=%0d | mem_we=%0d mem_addr=%0d mem_data=%0d", 
+        $time, pc_value, instruction, opcode, func3, func7, rd, rs1, rs2, rs1_data, rs2_data, imm_b, imm_j, alu_result, is_beq, is_jal, branch_taken, branch_target, reg_we, wb_data, x1_value, x2_value, x3_value, x4_value, x5_value, x6_value, x7_value, x8_value, x10_value, x14_value, x15_value, memory_we, memory_address, memory_read_data);
 
     end
 

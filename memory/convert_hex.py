@@ -16,6 +16,10 @@ for i in range(0, len(bytes_list), 4):
     word = b3 + b2 + b1 + b0   # little-endian → big-endian
     words.append(word)
 
+# Pad with FFFFFFFF to fill up to 256 words (memory[0:255])
+while len(words) < 256:
+    words.append("FFFFFFFF")
+
 with open("program_words.hex", "w") as f:
     for w in words:
         f.write(w + "\n")

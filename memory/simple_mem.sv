@@ -5,13 +5,12 @@ module simple_memory(
     // This means, input is 32 bit address, and output is also 32 bit address.
 );
 
-    // Memory Table -> 16 words, each of 32 bit 
-    // We can also think this as array of 16 numbers each of 32 bits
-    logic [31:0] memory [0:31];
+    // Memory Table -> sized for program_words.hex format
+    logic [31:0] memory [0:255];
 
     // Initialize memory with some known values
     initial begin
-        $readmemh("tests/test_bltu.hex", memory);
+        $readmemh("program_words.hex", memory);
     end
 
 

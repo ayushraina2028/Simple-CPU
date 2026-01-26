@@ -7,8 +7,8 @@ module data_memory (
 );
 
 
-    // We will have 64 words of memory for now
-    logic [31:0] memory [0:63];
+    // We need 65536 words to support full 32-bit address space (after >> 2)
+    logic [31:0] memory [0:65535];
 
     // Fill some values for simulation
     initial begin
@@ -20,14 +20,14 @@ module data_memory (
         
     end
 
-    // 31:2 means
-    assign read_data = memory[address[31:2]]; 
+    // 31:2 means divide by 4, but mask to valid memory range
+    assign read_data = memory[address[15:2]];  // Mask to 14 bits for 16K words 
 
     // Write on clock
     always_ff @(posedge clock) begin
 
         if(memory_we) begin
-            memory[address[31:2]] <= write_data;
+            memory[address[15:2]] <= write_data;  // Mask address to valid range
         end
 
     end

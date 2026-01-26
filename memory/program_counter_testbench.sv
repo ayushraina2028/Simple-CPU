@@ -22,6 +22,7 @@ module pc_testbench;
     logic is_lw;
     logic is_sw;
     logic is_beq;
+    logic is_bne;
     logic is_jal;
     logic is_jalr;
 
@@ -82,7 +83,9 @@ module pc_testbench;
     );
 
     // assign branch
-    assign branch_taken = is_beq && (rs1_data == rs2_data);
+    assign branch_taken = 
+        (is_beq && (rs1_data == rs2_data)) || 
+        (is_bne && (rs1_data != rs2_data));
     assign branch_target = pc_value + imm_b;
 
     // Assign jalr_target
@@ -133,6 +136,7 @@ module pc_testbench;
     assign is_lw = (opcode == 7'b0000011) && (func3 == 3'b010);
     assign is_sw = (opcode == 7'b0100011) && (func3 == 3'b010);
     assign is_beq = (opcode == 7'b1100011) && (func3 == 3'b000);
+    assign is_bne = (opcode == 7'b1100011) && (func3 == 3'b001);
     assign is_jal = (opcode == 7'b1101111);
     assign is_jalr = (opcode == 7'b1100111) && (func3 == 3'b000);
 

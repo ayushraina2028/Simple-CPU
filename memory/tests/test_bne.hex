@@ -1,0 +1,9 @@
+00500093   // addi x1, x0, 5
+00600113   // addi x2, x0, 6
+
+00209463   // bne  x1, x2, +8   (taken → skip next)
+
+00100193   // addi x3, x0, 1    (should execute once due to delay)
+00900193   // addi x3, x0, 9    (will be skipped)
+
+FFFFFFFF   // halt

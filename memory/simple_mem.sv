@@ -7,11 +7,11 @@ module simple_memory(
 
     // Memory Table -> 16 words, each of 32 bit 
     // We can also think this as array of 16 numbers each of 32 bits
-    logic [31:0] memory [0:15];
+    logic [31:0] memory [0:31];
 
     // Initialize memory with some known values
     initial begin
-        $readmemh("program.hex", memory);
+        $readmemh("test_jumps.hex", memory);
     end
 
 

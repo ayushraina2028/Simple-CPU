@@ -21,6 +21,7 @@ module pc_testbench;
     logic is_halt;
     logic is_lw;
     logic is_sw;
+    logic is_beq;
 
     logic [31:0] rs1_data;
     logic [31:0] rs2_data;
@@ -30,6 +31,8 @@ module pc_testbench;
     logic reg_we;
     
     logic [31:0] x1_value;
+    logic [31:0] x2_value;
+    logic [31:0] x3_value;
     logic [31:0] x4_value;
     logic [31:0] x5_value;
     logic [31:0] x6_value;
@@ -40,6 +43,7 @@ module pc_testbench;
 
     logic [31:0] imm;
     logic [31:0] imm_s; // S type immediate
+    logic [31:0] imm_b; // B type immediate
 
     logic memory_we;
     logic [31:0] memory_address;
@@ -47,6 +51,10 @@ module pc_testbench;
     logic [31:0] memory_read_data;
 
     logic [31:0] wb_data;
+
+    logic        branch_taken;
+    logic [31:0] branch_target;
+
 
     data_memory dm1 (
         .clock(clock),
@@ -68,6 +76,10 @@ module pc_testbench;
         .rs2_data(rs2_data)
     );
 
+    // assign branch
+    assign branch_taken = is_beq && (rs1_data == rs2_data);
+    assign branch_target = pc_value + imm_b;
+
     // Get memory values
     assign mem6_value = dm1.memory[6];
 
@@ -79,6 +91,8 @@ module pc_testbench;
 
     // Get register values
     assign x1_value = rf1.registers[1];
+    assign x2_value = rf1.registers[2];
+    assign x3_value = rf1.registers[3];
     assign x4_value = rf1.registers[4];
     assign x5_value = rf1.registers[5];
     assign x6_value = rf1.registers[6];
@@ -106,10 +120,13 @@ module pc_testbench;
     assign is_halt = (instruction == 32'hFFFFFFFF);
     assign is_lw = (opcode == 7'b0000011) && (func3 == 3'b010);
     assign is_sw = (opcode == 7'b0100011) && (func3 == 3'b010);
+    assign is_beq = (opcode == 7'b1100011) && (func3 == 3'b000);
 
     // Getting imm (sign extended)
     assign imm = {{20{instruction[31]}}, instruction[31:20]};
     assign imm_s = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
+    assign imm_b = {{19{instruction[31]}}, instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'b0};
+ 
 
     // In Riscv, instructions are of 32 bits and lower 7 bits are for opcodes
     assign opcode = instruction[6:0];
@@ -135,6 +152,8 @@ module pc_testbench;
         .clock(clock),
         .reset(reset),
         .is_halt(is_halt),
+        .branch_taken(branch_taken),
+        .branch_target(branch_target),
         .program_counter_value(pc_value)
     );
 
@@ -149,7 +168,7 @@ module pc_testbench;
     always #5 clock = ~clock;
 
     // t = 5, clock is 1, t = 10 (c = 0, no record), t = 15 (clock = 1, record again) and so on.
-
+    // fetch_next, execute_next , write_prev - 1 cycle
     initial begin
 
         reset = 1;
@@ -173,7 +192,8 @@ module pc_testbench;
 
     initial begin
 
-        $monitor("time=%0t PC= %0d Instruction = %0d Opcode = %07b rd = %0d rs1 = %0d rs2 = %0d func3 = %03b func7 = %07b is_add=%0d rs1_value = %0d, rs2_value = %0d, alu_result = %0d, x1=%0d x4 = %0d x5 = %0d x6 = %0d x7=%0d memory_address = %0d memory_we = %0d memory_read = %0d x5_value = %0d x8_value = %0d mem6_value = %0d", $time, pc_value, instruction, opcode, rd, rs1, rs2, func3, func7, is_add, rs1_data, rs2_data, alu_result, x1_value, x4_value, x5_value, x6_value, x7_value, memory_address, memory_we, memory_read_data, x5_value, x8_value, mem6_value);
+        $monitor("time=%0t | PC=%0d | Instr=0x%h (Opc=%07b f3=%03b f7=%07b) | rd=%0d rs1=%0d rs2=%0d | rs1_data=%0d rs2_data=%0d | imm_b=%0d | ALU=%0d | is_beq=%0d branch_taken=%0d branch_target=%0d | reg_we=%0d wb_data=%0d | x1=%0d x2=%0d x3=%0d | mem_we=%0d mem_addr=%0d mem_data=%0d", 
+        $time, pc_value, instruction, opcode, func3, func7, rd, rs1, rs2, rs1_data, rs2_data, imm_b, alu_result, is_beq, branch_taken, branch_target, reg_we, wb_data, x1_value, x2_value, x3_value, memory_we, memory_address, memory_read_data);
 
     end
 

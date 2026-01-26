@@ -1,0 +1,9 @@
+00500093   // addi x1, x0, 5
+00300113   // addi x2, x0, 3
+
+0020d463   // bge  x1, x2, +8
+
+00100193   // addi x3, x0, 1   (delay slot, will run)
+00900193   // addi x3, x0, 9   (target, should run)
+
+FFFFFFFF

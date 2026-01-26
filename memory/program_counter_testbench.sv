@@ -21,8 +21,12 @@ module pc_testbench;
     logic is_halt;
     logic is_lw;
     logic is_sw;
+
     logic is_beq;
     logic is_bne;
+    logic is_blt;
+    logic is_bge;
+
     logic is_jal;
     logic is_jalr;
 
@@ -56,7 +60,7 @@ module pc_testbench;
 
     logic [31:0] wb_data;
 
-    logic        branch_taken;
+    logic branch_taken;
     logic [31:0] branch_target;
 
     logic [31:0] jalr_target;
@@ -84,8 +88,11 @@ module pc_testbench;
 
     // assign branch
     assign branch_taken = 
-        (is_beq && (rs1_data == rs2_data)) || 
+        (is_beq && (rs1_data == rs2_data)) ||
+        (is_blt && ($signed(rs1_data) < $signed(rs2_data))) ||
+        (is_bge && ($signed(rs1_data) >= $signed(rs2_data))) || 
         (is_bne && (rs1_data != rs2_data));
+
     assign branch_target = pc_value + imm_b;
 
     // Assign jalr_target
@@ -135,8 +142,12 @@ module pc_testbench;
     assign is_halt = (instruction == 32'hFFFFFFFF);
     assign is_lw = (opcode == 7'b0000011) && (func3 == 3'b010);
     assign is_sw = (opcode == 7'b0100011) && (func3 == 3'b010);
+    
     assign is_beq = (opcode == 7'b1100011) && (func3 == 3'b000);
     assign is_bne = (opcode == 7'b1100011) && (func3 == 3'b001);
+    assign is_blt = (opcode == 7'b1100011) && (func3 == 3'b100);
+    assign is_bge = (opcode == 7'b1100011) && (func3 == 3'b101);
+
     assign is_jal = (opcode == 7'b1101111);
     assign is_jalr = (opcode == 7'b1100111) && (func3 == 3'b000);
 

@@ -11,7 +11,7 @@ module simple_memory(
 
     // Initialize memory with some known values
     initial begin
-        $readmemh("tests/test_bne.hex", memory);
+        $readmemh("tests/test_bge.hex", memory);
     end
 
 

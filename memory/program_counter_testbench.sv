@@ -26,6 +26,8 @@ module pc_testbench;
     logic is_bne;
     logic is_blt;
     logic is_bge;
+    logic is_bltu;
+    logic is_bgeu;
 
     logic is_jal;
     logic is_jalr;
@@ -91,6 +93,8 @@ module pc_testbench;
         (is_beq && (rs1_data == rs2_data)) ||
         (is_blt && ($signed(rs1_data) < $signed(rs2_data))) ||
         (is_bge && ($signed(rs1_data) >= $signed(rs2_data))) || 
+        (is_bltu && (rs1_data < rs2_data)) ||
+        (is_bgeu && (rs1_data >= rs2_data)) ||
         (is_bne && (rs1_data != rs2_data));
 
     assign branch_target = pc_value + imm_b;
@@ -147,6 +151,8 @@ module pc_testbench;
     assign is_bne = (opcode == 7'b1100011) && (func3 == 3'b001);
     assign is_blt = (opcode == 7'b1100011) && (func3 == 3'b100);
     assign is_bge = (opcode == 7'b1100011) && (func3 == 3'b101);
+    assign is_bltu = (opcode == 7'b1100011) && (func3 == 3'b110);
+    assign is_bgeu = (opcode == 7'b1100011) && (func3 == 3'b111);
 
     assign is_jal = (opcode == 7'b1101111);
     assign is_jalr = (opcode == 7'b1100111) && (func3 == 3'b000);
